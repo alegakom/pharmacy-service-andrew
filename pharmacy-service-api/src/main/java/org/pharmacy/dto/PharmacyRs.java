@@ -6,16 +6,17 @@ import lombok.Value;
 import java.util.UUID;
 
 /**
- * DTO для аптечной сети.
+ * Response-DTO для аптеки.
  */
 @Value
 @Builder
-public class PharmacyChainDto {
+public class PharmacyRs {
 
     UUID id;
     String address;
-    boolean locale;
-    String shortName;
-    String juridicalName;
+    String name;
+    Long inn;
+    String category;
     String juridicalForm;
+    UUID pharmacyChainId;
 }

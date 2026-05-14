@@ -1,11 +1,12 @@
 package org.pharmacy.impl;
 
 import lombok.RequiredArgsConstructor;
-import org.pharmacy.dto.PharmacyChainDto;
+import org.pharmacy.constant.ExceptionMessageConstants;
+import org.pharmacy.dto.CreatePharmacyChainRq;
+import org.pharmacy.dto.PharmacyChainRs;
 import org.pharmacy.entity.PharmacyChain;
 import org.pharmacy.mapper.PharmacyChainMapper;
 import org.pharmacy.repository.PharmacyChainRepository;
-import org.pharmacy.request.CreatePharmacyChainRequest;
 import org.pharmacy.service.PharmacyChainService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,7 +20,6 @@ import java.util.UUID;
  */
 @Service
 @RequiredArgsConstructor
-@Transactional(readOnly = true)
 public class PharmacyChainServiceImpl implements PharmacyChainService {
 
     private final PharmacyChainRepository pharmacyChainRepository;
@@ -27,21 +27,23 @@ public class PharmacyChainServiceImpl implements PharmacyChainService {
 
     @Override
     @Transactional
-    public PharmacyChainDto create(CreatePharmacyChainRequest pharmacyChainRequest) {
-        PharmacyChain pharmacyChain = pharmacyChainMapper.toEntity(pharmacyChainRequest);
+    public PharmacyChainRs create(CreatePharmacyChainRq pharmacyChainRq) {
+        PharmacyChain pharmacyChain = pharmacyChainMapper.toEntity(pharmacyChainRq);
         PharmacyChain saved = pharmacyChainRepository.save(pharmacyChain);
         return pharmacyChainMapper.toDto(saved);
     }
 
     @Override
-    public PharmacyChainDto findById(UUID id) {
+    @Transactional(readOnly = true)
+    public PharmacyChainRs findById(UUID id) {
         return pharmacyChainRepository.findById(id)
                 .map(pharmacyChainMapper::toDto)
-                .orElseThrow(() -> new NoSuchElementException("PharmacyChain not found: " + id));
+                .orElseThrow(() -> new NoSuchElementException(ExceptionMessageConstants.PHARMACY_CHAIN_NOT_FOUND + id));
     }
 
     @Override
-    public List<PharmacyChainDto> findAll() {
+    @Transactional(readOnly = true)
+    public List<PharmacyChainRs> findAll() {
         return pharmacyChainRepository.findAll()
                 .stream()
                 .map(pharmacyChainMapper::toDto)
@@ -49,10 +51,20 @@ public class PharmacyChainServiceImpl implements PharmacyChainService {
     }
 
     @Override
+    public PharmacyChainRs update(UUID id, CreatePharmacyChainRq pharmacyChainRq) {
+        PharmacyChain pharmacyChain = pharmacyChainRepository.findById(id)
+                .orElseThrow(() -> new NoSuchElementException(ExceptionMessageConstants.PHARMACY_CHAIN_NOT_FOUND + id));
+        pharmacyChainMapper.updateFromDto(pharmacyChainRq, pharmacyChain);
+
+        pharmacyChainRepository.save(pharmacyChain);
+        return pharmacyChainMapper.toDto(pharmacyChain);
+    }
+
+    @Override
     @Transactional
     public void deleteById(UUID id) {
         if (!pharmacyChainRepository.existsById(id)) {
-            throw new NoSuchElementException("PharmacyChain not found: " + id);
+            throw new NoSuchElementException(ExceptionMessageConstants.PHARMACY_CHAIN_NOT_FOUND + id);
         }
         pharmacyChainRepository.deleteById(id);
     }

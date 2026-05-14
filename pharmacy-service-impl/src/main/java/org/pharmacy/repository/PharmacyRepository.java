@@ -13,4 +13,5 @@ public interface PharmacyRepository extends JpaRepository<Pharmacy, UUID> {
 
     List<Pharmacy> findAllByPharmacyChainId(UUID pharmacyChainId);
 
+    List<Pharmacy> findAllByPharmacyChainIsNull();
 }

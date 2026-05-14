@@ -1,17 +1,20 @@
-package org.pharmacy.request;
+package org.pharmacy.dto;
 
 import lombok.Builder;
 import lombok.Value;
 
+import java.util.UUID;
+
 /**
- * Request-DTO для аптечной сети.
+ * DTO для аптечной сети.
  */
 @Value
 @Builder
-public class CreatePharmacyChainRequest {
+public class PharmacyChainRs {
 
+    UUID id;
     String address;
-    boolean locale;
+    Boolean locale;
     String shortName;
     String juridicalName;
     String juridicalForm;

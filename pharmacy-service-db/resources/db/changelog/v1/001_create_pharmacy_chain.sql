@@ -1,6 +1,6 @@
 -- liquibase formatted sql
 
--- changeset Andrew:001-create-pharmacy-chain
+-- changeset Andrew:001_create_pharmacy_chain
 
 CREATE TABLE pharmacy_chain
 (

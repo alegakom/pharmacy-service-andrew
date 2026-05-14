@@ -1,11 +1,10 @@
 package org.pharmacy.controller;
 
 import lombok.RequiredArgsConstructor;
-import org.pharmacy.dto.PharmacyChainDto;
-import org.pharmacy.request.CreatePharmacyChainRequest;
+import org.pharmacy.dto.PharmacyChainRs;
+import org.pharmacy.dto.CreatePharmacyChainRq;
 import org.pharmacy.service.PharmacyChainService;
-import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 import java.util.UUID;
@@ -15,30 +14,32 @@ import java.util.UUID;
  */
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/pharmacy-chain")
-public class PharmacyChainController {
+public class PharmacyChainController implements PharmacyChainControllerApi {
 
     private final PharmacyChainService pharmacyChainService;
 
-    @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
-    public PharmacyChainDto create(@RequestBody CreatePharmacyChainRequest pharmacyChainRequest) {
+    @Override
+    public PharmacyChainRs create(CreatePharmacyChainRq pharmacyChainRequest) {
         return pharmacyChainService.create(pharmacyChainRequest);
     }
 
-    @GetMapping("/{id}")
-    public PharmacyChainDto findById(@PathVariable UUID id) {
+    @Override
+    public PharmacyChainRs findById(UUID id) {
         return pharmacyChainService.findById(id);
     }
 
-    @GetMapping
-    public List<PharmacyChainDto> findAll() {
+    @Override
+    public List<PharmacyChainRs> findAll() {
         return pharmacyChainService.findAll();
     }
 
-    @DeleteMapping("/{id}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteById(@PathVariable UUID id) {
+    @Override
+    public PharmacyChainRs update(UUID id, CreatePharmacyChainRq pharmacyChainRq) {
+        return pharmacyChainService.update(id, pharmacyChainRq);
+    }
+
+    @Override
+    public void deleteById(UUID id) {
         pharmacyChainService.deleteById(id);
     }
 }

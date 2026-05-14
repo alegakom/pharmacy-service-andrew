@@ -1,9 +1,12 @@
 package org.pharmacy.mapper;
 
+import org.mapstruct.BeanMapping;
 import org.mapstruct.Mapper;
-import org.pharmacy.dto.PharmacyChainDto;
+import org.mapstruct.MappingTarget;
+import org.mapstruct.NullValuePropertyMappingStrategy;
+import org.pharmacy.dto.CreatePharmacyChainRq;
+import org.pharmacy.dto.PharmacyChainRs;
 import org.pharmacy.entity.PharmacyChain;
-import org.pharmacy.request.CreatePharmacyChainRequest;
 
 /**
  * Маппер для аптечной сети.
@@ -11,7 +14,10 @@ import org.pharmacy.request.CreatePharmacyChainRequest;
 @Mapper(componentModel = "spring")
 public interface PharmacyChainMapper {
 
-    PharmacyChainDto toDto(PharmacyChain entity);
+    PharmacyChainRs toDto(PharmacyChain entity);
 
-    PharmacyChain toEntity(CreatePharmacyChainRequest pharmacyChainRequest);
+    PharmacyChain toEntity(CreatePharmacyChainRq pharmacyChainRequest);
+
+    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+    void updateFromDto(CreatePharmacyChainRq source, @MappingTarget PharmacyChain target);
 }

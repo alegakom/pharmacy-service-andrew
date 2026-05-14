@@ -1,10 +1,13 @@
 package org.pharmacy.mapper;
 
+import org.mapstruct.BeanMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
-import org.pharmacy.dto.PharmacyDto;
+import org.mapstruct.MappingTarget;
+import org.mapstruct.NullValuePropertyMappingStrategy;
+import org.pharmacy.dto.PharmacyRs;
 import org.pharmacy.entity.Pharmacy;
-import org.pharmacy.request.CreatePharmacyRequest;
+import org.pharmacy.dto.CreatePharmacyRq;
 
 /**
  * Маппер для аптеки.
@@ -13,8 +16,11 @@ import org.pharmacy.request.CreatePharmacyRequest;
 public interface PharmacyMapper {
 
     @Mapping(source = "pharmacyChain.id", target = "pharmacyChainId")
-    PharmacyDto toDto(Pharmacy entity);
+    PharmacyRs toDto(Pharmacy entity);
 
     @Mapping(target = "pharmacyChain", ignore = true)
-    Pharmacy toEntity(CreatePharmacyRequest pharmacyRequest);
+    Pharmacy toEntity(CreatePharmacyRq pharmacyRequest);
+
+    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+    void updateFromDto(CreatePharmacyRq source, @MappingTarget Pharmacy target);
 }
