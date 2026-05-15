@@ -16,6 +16,7 @@ public class PharmacyChainRs {
     String address;
     Boolean locale;
     String shortName;
+    String inn;
     String juridicalName;
     String juridicalForm;
 }
