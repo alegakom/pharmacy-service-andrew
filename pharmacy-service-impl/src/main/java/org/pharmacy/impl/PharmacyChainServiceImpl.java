@@ -6,6 +6,7 @@ import org.pharmacy.dto.CreatePharmacyChainRq;
 import org.pharmacy.dto.PharmacyChainRs;
 import org.pharmacy.entity.PharmacyChain;
 import org.pharmacy.exception.DuplicateInnException;
+import org.pharmacy.exception.NotFoundCrmException;
 import org.pharmacy.mapper.PharmacyChainMapper;
 import org.pharmacy.repository.PharmacyChainRepository;
 import org.pharmacy.service.PharmacyChainService;
@@ -13,7 +14,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.UUID;
 
 /**
@@ -43,7 +43,7 @@ public class PharmacyChainServiceImpl implements PharmacyChainService {
     public PharmacyChainRs findById(UUID id) {
         return pharmacyChainRepository.findById(id)
                 .map(pharmacyChainMapper::toDto)
-                .orElseThrow(() -> new NoSuchElementException(
+                .orElseThrow(() -> new NotFoundCrmException(
                         String.format(ExceptionMessageConstants.PHARMACY_CHAIN_NOT_FOUND, id)));
     }
 
@@ -59,7 +59,7 @@ public class PharmacyChainServiceImpl implements PharmacyChainService {
     @Override
     public PharmacyChainRs update(UUID id, CreatePharmacyChainRq pharmacyChainRq) {
         PharmacyChain pharmacyChain = pharmacyChainRepository.findById(id)
-                .orElseThrow(() -> new NoSuchElementException(
+                .orElseThrow(() -> new NotFoundCrmException(
                         String.format(ExceptionMessageConstants.PHARMACY_CHAIN_NOT_FOUND, id)));
 
         String newInn = pharmacyChainRq.getInn();
@@ -76,7 +76,7 @@ public class PharmacyChainServiceImpl implements PharmacyChainService {
     @Transactional
     public void deleteById(UUID id) {
         if (!pharmacyChainRepository.existsById(id)) {
-            throw new NoSuchElementException(
+            throw new NotFoundCrmException(
                     String.format(ExceptionMessageConstants.PHARMACY_CHAIN_NOT_FOUND, id));
         }
         pharmacyChainRepository.deleteById(id);
