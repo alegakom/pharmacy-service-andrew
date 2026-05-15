@@ -1,3 +1,7 @@
+server:
+  port: 8181
+  servlet:
+    context-path: /pharmacy-service
 spring:
   application:
     name: pharmacy-service-impl
