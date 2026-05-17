@@ -21,3 +21,9 @@ logging:
     org:
       hibernate:
         sql: debug
+    org.pharmacy.exception.handler: error
+  file:
+    name: logs/pharmacy-app.log
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} - %level - %msg%n"
+    file: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"

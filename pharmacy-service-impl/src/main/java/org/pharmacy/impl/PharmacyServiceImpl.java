@@ -6,6 +6,7 @@ import org.pharmacy.dto.PharmacyRs;
 import org.pharmacy.entity.Pharmacy;
 import org.pharmacy.entity.PharmacyChain;
 import org.pharmacy.exception.DuplicateInnException;
+import org.pharmacy.exception.NotFoundCrmException;
 import org.pharmacy.mapper.PharmacyMapper;
 import org.pharmacy.repository.PharmacyChainRepository;
 import org.pharmacy.repository.PharmacyRepository;
@@ -15,7 +16,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.UUID;
 
 /**
@@ -51,7 +51,7 @@ public class PharmacyServiceImpl implements PharmacyService {
     public PharmacyRs findById(UUID id) {
         return pharmacyRepository.findById(id)
                 .map(pharmacyMapper::toDto)
-                .orElseThrow(() -> new NoSuchElementException(
+                .orElseThrow(() -> new NotFoundCrmException(
                         String.format(ExceptionMessageConstants.PHARMACY_NOT_FOUND, id)));
     }
 
@@ -83,7 +83,7 @@ public class PharmacyServiceImpl implements PharmacyService {
     @Transactional
     public PharmacyRs update(UUID id, CreatePharmacyRq pharmacyRq) {
         Pharmacy pharmacy = pharmacyRepository.findById(id)
-                .orElseThrow(() -> new NoSuchElementException(
+                .orElseThrow(() -> new NotFoundCrmException(
                         String.format(ExceptionMessageConstants.PHARMACY_NOT_FOUND, id)));
 
         String newInn = pharmacyRq.getInn();
@@ -100,7 +100,7 @@ public class PharmacyServiceImpl implements PharmacyService {
     @Transactional
     public void deleteById(UUID id) {
         if (!pharmacyRepository.existsById(id)) {
-            throw new NoSuchElementException(
+            throw new NotFoundCrmException(
                     String.format(ExceptionMessageConstants.PHARMACY_NOT_FOUND, id));
         }
         pharmacyRepository.deleteById(id);
