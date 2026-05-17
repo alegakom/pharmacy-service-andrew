@@ -15,7 +15,7 @@ public class PharmacyRs {
     UUID id;
     String address;
     String name;
-    Long inn;
+    String inn;
     String category;
     String juridicalForm;
     UUID pharmacyChainId;

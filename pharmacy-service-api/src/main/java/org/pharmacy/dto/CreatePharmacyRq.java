@@ -1,9 +1,6 @@
 package org.pharmacy.dto;
 
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Positive;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
 import lombok.Builder;
 import lombok.Value;
 
@@ -28,8 +25,8 @@ public class CreatePharmacyRq {
     String name;
 
     @NotNull(groups = onCreate.class)
-    @Positive
-    Long inn;
+    @Pattern(regexp = "\\d{10}|\\d{12}")
+    String inn;
 
     @NotBlank(groups = onCreate.class)
     @Size(max = 5)

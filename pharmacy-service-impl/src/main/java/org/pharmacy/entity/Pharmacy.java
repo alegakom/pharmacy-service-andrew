@@ -9,6 +9,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.Pattern;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -36,8 +37,9 @@ public class Pharmacy {
     @Column(nullable = false, length = 64)
     private String name;
 
-    @Column(nullable = false)
-    private Long inn;
+    @Column(nullable = false, unique = true)
+    @Pattern(regexp = "\\d{10}|\\d{12}")
+    private String inn;
 
     @Column(nullable = false, length = 5)
     private String category;

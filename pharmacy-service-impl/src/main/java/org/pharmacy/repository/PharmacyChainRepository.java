@@ -10,4 +10,5 @@ import java.util.UUID;
  */
 public interface PharmacyChainRepository extends JpaRepository<PharmacyChain, UUID> {
 
+    boolean existsByInn(String inn);
 }

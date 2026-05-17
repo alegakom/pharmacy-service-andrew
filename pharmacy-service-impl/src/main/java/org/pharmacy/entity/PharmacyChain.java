@@ -8,6 +8,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.Pattern;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -39,6 +40,10 @@ public class PharmacyChain {
 
     @Column(name = "short_name", length = 32)
     private String shortName;
+
+    @Column(nullable = false)
+    @Pattern(regexp = "\\d{10}|\\d{12}")
+    private String inn;
 
     @Column(name = "juridical_name", nullable = false, length = 64)
     private String juridicalName;
