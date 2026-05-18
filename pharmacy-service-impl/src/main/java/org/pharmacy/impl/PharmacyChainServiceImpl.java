@@ -5,7 +5,7 @@ import org.pharmacy.constant.ExceptionMessageConstants;
 import org.pharmacy.dto.CreatePharmacyChainRq;
 import org.pharmacy.dto.PharmacyChainRs;
 import org.pharmacy.entity.PharmacyChain;
-import org.pharmacy.exception.DuplicateInnException;
+import org.pharmacy.exception.DuplicateDataException;
 import org.pharmacy.exception.NotFoundCrmException;
 import org.pharmacy.mapper.PharmacyChainMapper;
 import org.pharmacy.repository.PharmacyChainRepository;
@@ -30,7 +30,7 @@ public class PharmacyChainServiceImpl implements PharmacyChainService {
     @Transactional
     public PharmacyChainRs create(CreatePharmacyChainRq pharmacyChainRq) {
         if (pharmacyChainRepository.existsByInn(pharmacyChainRq.getInn())) {
-            throw new DuplicateInnException(pharmacyChainRq.getInn());
+            throw new DuplicateDataException(pharmacyChainRq.getInn());
         }
 
         PharmacyChain pharmacyChain = pharmacyChainMapper.toEntity(pharmacyChainRq);
@@ -64,7 +64,7 @@ public class PharmacyChainServiceImpl implements PharmacyChainService {
 
         String newInn = pharmacyChainRq.getInn();
         if (!pharmacyChain.getInn().equals(newInn) && pharmacyChainRepository.existsByInn(newInn)) {
-            throw new DuplicateInnException(newInn);
+            throw new DuplicateDataException(newInn);
         }
 
         pharmacyChainMapper.updateFromDto(pharmacyChainRq, pharmacyChain);
