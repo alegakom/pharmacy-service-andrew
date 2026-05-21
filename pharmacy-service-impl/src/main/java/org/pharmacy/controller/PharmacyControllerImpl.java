@@ -14,7 +14,7 @@ import java.util.UUID;
  */
 @RestController
 @RequiredArgsConstructor
-public class PharmacyController implements PharmacyControllerApi {
+public class PharmacyControllerImpl implements PharmacyController {
 
     private final PharmacyService pharmacyService;
 
@@ -29,10 +29,7 @@ public class PharmacyController implements PharmacyControllerApi {
     }
 
     @Override
-    public List<PharmacyRs> findAll(UUID chainId, Boolean withoutChain) {
-        if (withoutChain != null && withoutChain) {
-            return pharmacyService.findAllByPharmacyChainIsNull();
-        }
+    public List<PharmacyRs> findAll(UUID chainId) {
         if (chainId != null) {
             return pharmacyService.findAllByPharmacyChainId(chainId);
         }

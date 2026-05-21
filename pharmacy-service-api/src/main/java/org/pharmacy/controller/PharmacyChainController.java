@@ -20,7 +20,7 @@ import java.util.UUID;
  * Интерфейс REST-контроллера для управления аптечными сетями.
  */
 @RequestMapping("/api/v1/pharmacy-chain")
-public interface PharmacyChainControllerApi {
+public interface PharmacyChainController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)

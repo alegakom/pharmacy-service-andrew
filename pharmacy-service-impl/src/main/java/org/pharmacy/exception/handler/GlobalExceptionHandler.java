@@ -1,6 +1,7 @@
 package org.pharmacy.exception.handler;
 
 import lombok.extern.slf4j.Slf4j;
+import org.pharmacy.exception.DefaultPharmacyChainModificationException;
 import org.pharmacy.exception.DuplicateDataException;
 import org.pharmacy.exception.NotFoundCrmException;
 import org.springframework.core.Ordered;
@@ -26,6 +27,13 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(DuplicateDataException.class)
     public String handleDuplicateDataException(DuplicateDataException exception) {
         log.error("Duplicate data exception: {}", exception.getMessage());
+        return exception.getMessage();
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(DefaultPharmacyChainModificationException.class)
+    public String handleDefaultPharmacyChainModificationException(DefaultPharmacyChainModificationException exception) {
+        log.error("Default pharmacy chain modification exception: {}", exception.getMessage());
         return exception.getMessage();
     }
 }

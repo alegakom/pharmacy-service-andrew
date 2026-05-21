@@ -1,7 +1,8 @@
-package org.pharmacy.impl;
+package org.pharmacy.service;
 
 import lombok.RequiredArgsConstructor;
 import org.pharmacy.constant.ExceptionMessageConstants;
+import org.pharmacy.constant.PharmacyChainConstants;
 import org.pharmacy.dto.PharmacyRs;
 import org.pharmacy.entity.Pharmacy;
 import org.pharmacy.entity.PharmacyChain;
@@ -11,7 +12,6 @@ import org.pharmacy.mapper.PharmacyMapper;
 import org.pharmacy.repository.PharmacyChainRepository;
 import org.pharmacy.repository.PharmacyRepository;
 import org.pharmacy.dto.CreatePharmacyRq;
-import org.pharmacy.service.PharmacyService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -36,21 +36,28 @@ public class PharmacyServiceImpl implements PharmacyService {
             throw new DuplicateDataException(pharmacyRq.getInn());
         }
 
-        Pharmacy pharmacy = pharmacyMapper.toEntity(pharmacyRq);
-        if (pharmacyRq.getPharmacyChainId() != null) {
-            PharmacyChain pharmacyChain = pharmacyChainRepository.getReferenceById(pharmacyRq.getPharmacyChainId());
-            pharmacy.setPharmacyChain(pharmacyChain);
+        PharmacyChain pharmacyChain;
+        UUID pharmacyChainId = pharmacyRq.getPharmacyChainId();
+        if (pharmacyChainId != null) {
+            pharmacyChain = pharmacyChainRepository.findById(pharmacyChainId)
+                    .orElseThrow(() -> new NotFoundCrmException(
+                            String.format(ExceptionMessageConstants.PHARMACY_CHAIN_NOT_FOUND, pharmacyChainId)));
+        } else {
+            pharmacyChain = pharmacyChainRepository.getReferenceById(PharmacyChainConstants.WITHOUT_CHAIN_DEFAULT_ID);
         }
 
+        Pharmacy pharmacy = pharmacyMapper.convertToEntity(pharmacyRq);
+        pharmacy.setPharmacyChain(pharmacyChain);
+
         Pharmacy saved = pharmacyRepository.save(pharmacy);
-        return pharmacyMapper.toDto(saved);
+        return pharmacyMapper.convertToDto(saved);
     }
 
     @Override
     @Transactional(readOnly = true)
     public PharmacyRs findById(UUID id) {
         return pharmacyRepository.findById(id)
-                .map(pharmacyMapper::toDto)
+                .map(pharmacyMapper::convertToDto)
                 .orElseThrow(() -> new NotFoundCrmException(
                         String.format(ExceptionMessageConstants.PHARMACY_NOT_FOUND, id)));
     }
@@ -59,15 +66,7 @@ public class PharmacyServiceImpl implements PharmacyService {
     @Transactional(readOnly = true)
     public List<PharmacyRs> findAllByPharmacyChainId(UUID pharmacyChainId) {
         return pharmacyRepository.findAllByPharmacyChainId(pharmacyChainId).stream()
-                .map(pharmacyMapper::toDto)
-                .toList();
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public List<PharmacyRs> findAllByPharmacyChainIsNull() {
-        return pharmacyRepository.findAllByPharmacyChainIsNull().stream()
-                .map(pharmacyMapper::toDto)
+                .map(pharmacyMapper::convertToDto)
                 .toList();
     }
 
@@ -75,7 +74,7 @@ public class PharmacyServiceImpl implements PharmacyService {
     @Transactional(readOnly = true)
     public List<PharmacyRs> findAll() {
         return pharmacyRepository.findAll().stream()
-                .map(pharmacyMapper::toDto)
+                .map(pharmacyMapper::convertToDto)
                 .toList();
     }
 
@@ -87,13 +86,21 @@ public class PharmacyServiceImpl implements PharmacyService {
                         String.format(ExceptionMessageConstants.PHARMACY_NOT_FOUND, id)));
 
         String newInn = pharmacyRq.getInn();
-        if (!pharmacy.getInn().equals(newInn) && pharmacyRepository.existsByInn(newInn)) {
+        if (newInn != null && !pharmacy.getInn().equals(newInn) && pharmacyRepository.existsByInn(newInn)) {
             throw new DuplicateDataException(newInn);
         }
 
-        pharmacyMapper.updateFromDto(pharmacyRq, pharmacy);
+        UUID newPharmacyChainId = pharmacyRq.getPharmacyChainId();
+        if (newPharmacyChainId != null) {
+            PharmacyChain newPharmacyChain = pharmacyChainRepository.findById(newPharmacyChainId)
+                    .orElseThrow(() -> new NotFoundCrmException(
+                            String.format(ExceptionMessageConstants.PHARMACY_CHAIN_NOT_FOUND, newPharmacyChainId)));
+            pharmacy.setPharmacyChain(newPharmacyChain);
+        }
+
+        pharmacyMapper.updateEntityFromDto(pharmacyRq, pharmacy);
         pharmacyRepository.save(pharmacy);
-        return pharmacyMapper.toDto(pharmacy);
+        return pharmacyMapper.convertToDto(pharmacy);
     }
 
     @Override
