@@ -21,7 +21,7 @@ import java.util.UUID;
  * Интерфейс REST-контроллера для управления аптекой.
  */
 @RequestMapping("/api/v1/pharmacies")
-public interface PharmacyControllerApi {
+public interface PharmacyController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
@@ -31,8 +31,7 @@ public interface PharmacyControllerApi {
     PharmacyRs findById(@PathVariable UUID id);
 
     @GetMapping
-    List<PharmacyRs> findAll(@RequestParam(required = false) UUID chainId,
-                             @RequestParam(required = false) Boolean withoutChain);
+    List<PharmacyRs> findAll(@RequestParam(required = false) UUID chainId);
 
     @PatchMapping("/{id}")
     PharmacyRs update(@PathVariable UUID id,

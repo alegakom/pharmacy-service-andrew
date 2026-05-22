@@ -14,7 +14,7 @@ import java.util.UUID;
  */
 @RestController
 @RequiredArgsConstructor
-public class PharmacyChainController implements PharmacyChainControllerApi {
+public class PharmacyChainControllerImpl implements PharmacyChainController {
 
     private final PharmacyChainService pharmacyChainService;
 

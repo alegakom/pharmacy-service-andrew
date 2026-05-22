@@ -17,8 +17,6 @@ public interface PharmacyService {
 
     List<PharmacyRs> findAllByPharmacyChainId(UUID pharmacyChainId);
 
-    List<PharmacyRs> findAllByPharmacyChainIsNull();
-
     List<PharmacyRs> findAll();
 
     PharmacyRs update(UUID id, CreatePharmacyRq pharmacyRq);

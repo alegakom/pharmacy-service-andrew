@@ -1,15 +1,16 @@
-package org.pharmacy.impl;
+package org.pharmacy.service;
 
 import lombok.RequiredArgsConstructor;
 import org.pharmacy.constant.ExceptionMessageConstants;
+import org.pharmacy.constant.PharmacyChainConstants;
 import org.pharmacy.dto.CreatePharmacyChainRq;
 import org.pharmacy.dto.PharmacyChainRs;
 import org.pharmacy.entity.PharmacyChain;
 import org.pharmacy.exception.DuplicateDataException;
 import org.pharmacy.exception.NotFoundCrmException;
+import org.pharmacy.exception.DefaultPharmacyChainModificationException;
 import org.pharmacy.mapper.PharmacyChainMapper;
 import org.pharmacy.repository.PharmacyChainRepository;
-import org.pharmacy.service.PharmacyChainService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -58,6 +59,11 @@ public class PharmacyChainServiceImpl implements PharmacyChainService {
 
     @Override
     public PharmacyChainRs update(UUID id, CreatePharmacyChainRq pharmacyChainRq) {
+        if (PharmacyChainConstants.WITHOUT_CHAIN_DEFAULT_ID.equals(id)) {
+            throw new DefaultPharmacyChainModificationException(
+                    ExceptionMessageConstants.DEFAULT_PHARMACY_CHAIN_MODIFICATION);
+        }
+
         PharmacyChain pharmacyChain = pharmacyChainRepository.findById(id)
                 .orElseThrow(() -> new NotFoundCrmException(
                         String.format(ExceptionMessageConstants.PHARMACY_CHAIN_NOT_FOUND, id)));
@@ -75,10 +81,16 @@ public class PharmacyChainServiceImpl implements PharmacyChainService {
     @Override
     @Transactional
     public void deleteById(UUID id) {
+        if (PharmacyChainConstants.WITHOUT_CHAIN_DEFAULT_ID.equals(id)) {
+            throw new DefaultPharmacyChainModificationException(
+                    ExceptionMessageConstants.DEFAULT_PHARMACY_CHAIN_MODIFICATION);
+        }
+
         if (!pharmacyChainRepository.existsById(id)) {
             throw new NotFoundCrmException(
                     String.format(ExceptionMessageConstants.PHARMACY_CHAIN_NOT_FOUND, id));
         }
+
         pharmacyChainRepository.deleteById(id);
     }
 }
