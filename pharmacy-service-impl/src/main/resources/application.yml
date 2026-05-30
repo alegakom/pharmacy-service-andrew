@@ -2,11 +2,12 @@ server:
   port: 8181
   servlet:
     context-path: /pharmacy-service
+
 spring:
   application:
     name: pharmacy-service-impl
   datasource:
-    url: jdbc:postgresql://localhost:5432/postgres
+    url: jdbc:postgresql://localhost:5433/pharmacy
     username: postgres
     password: postgres
   liquibase:
@@ -15,6 +16,21 @@ spring:
     hibernate:
       ddl-auto: validate
     show-sql: true
+  cloud:
+    openfeign:
+      client:
+        config:
+          default:
+            connect-timeout: 60000
+            read-timeout: 10000
+          auth-service:
+            url: http://localhost:8282
+            connect-timeout: 60000
+            read-timeout: 10000
+
+auth:
+  service:
+    url: http://localhost:8282/auth-service
 
 logging:
   level:
