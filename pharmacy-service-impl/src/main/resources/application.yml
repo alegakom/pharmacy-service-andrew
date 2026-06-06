@@ -7,7 +7,7 @@ spring:
   application:
     name: pharmacy-service-impl
   datasource:
-    url: jdbc:postgresql://localhost:5433/pharmacy
+    url: jdbc:postgresql://localhost:5433/pharmacy_db
     username: postgres
     password: postgres
   liquibase:
