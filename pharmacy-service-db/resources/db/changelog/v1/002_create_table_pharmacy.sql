@@ -1,7 +1,7 @@
 -- liquibase formatted sql
 
--- changeset Andrew:002_create_pharmacy
--- comment: Создание таблицы аптек. Содержит основную информацию о аптечных точках.
+-- changeset Andrew:002_create_table_pharmacy
+-- comment: Создание таблицы аптек. Содержит основную информацию об аптечных точках.
 
 CREATE TABLE pharmacy
 (
