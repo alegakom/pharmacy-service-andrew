@@ -1,5 +1,6 @@
 package org.pharmacy.service;
 
+import org.pharmacy.dto.PharmacyInfoDto;
 import org.pharmacy.dto.PharmacyRs;
 import org.pharmacy.dto.CreatePharmacyRq;
 
@@ -23,4 +24,5 @@ public interface PharmacyService {
 
     void deleteById(UUID id);
 
+    PharmacyInfoDto getPharmacyInfo(UUID pharmacyId);
 }

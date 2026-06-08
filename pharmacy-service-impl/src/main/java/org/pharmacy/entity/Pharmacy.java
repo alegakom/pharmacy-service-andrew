@@ -14,6 +14,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDate;
 import java.util.UUID;
 
 /**
@@ -50,4 +51,10 @@ public class Pharmacy {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "pharmacy_chain_id")
     private PharmacyChain pharmacyChain;
+
+    @Column(length = 32)
+    private String token;
+
+    @Column(name = "expired_date")
+    private LocalDate expiredDate;
 }

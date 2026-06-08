@@ -1,9 +1,13 @@
 package org.pharmacy.service;
 
 import lombok.RequiredArgsConstructor;
+import org.pharmacy.client.AuthClient;
+import org.pharmacy.client.PharmacyInfoClient;
 import org.pharmacy.constant.ExceptionMessageConstants;
 import org.pharmacy.constant.PharmacyChainConstants;
+import org.pharmacy.dto.PharmacyInfoDto;
 import org.pharmacy.dto.PharmacyRs;
+import org.pharmacy.dto.TokenInfoDto;
 import org.pharmacy.entity.Pharmacy;
 import org.pharmacy.entity.PharmacyChain;
 import org.pharmacy.exception.DuplicateDataException;
@@ -15,6 +19,7 @@ import org.pharmacy.dto.CreatePharmacyRq;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
@@ -28,6 +33,8 @@ public class PharmacyServiceImpl implements PharmacyService {
     private final PharmacyRepository pharmacyRepository;
     private final PharmacyChainRepository pharmacyChainRepository;
     private final PharmacyMapper pharmacyMapper;
+    private final AuthClient authClient;
+    private final PharmacyInfoClient pharmacyInfoClient;
 
     @Override
     @Transactional
@@ -111,5 +118,24 @@ public class PharmacyServiceImpl implements PharmacyService {
                     String.format(ExceptionMessageConstants.PHARMACY_NOT_FOUND, id));
         }
         pharmacyRepository.deleteById(id);
+    }
+
+    @Override
+    @Transactional
+    public PharmacyInfoDto getPharmacyInfo(UUID pharmacyId) {
+        Pharmacy pharmacy = pharmacyRepository.findById(pharmacyId)
+                .orElseThrow(() -> new NotFoundCrmException(
+                        String.format(ExceptionMessageConstants.PHARMACY_NOT_FOUND, pharmacyId)));
+
+        String token = pharmacy.getToken();
+        LocalDate expiredDate = pharmacy.getExpiredDate();
+        if (token == null || expiredDate == null || expiredDate.isBefore(LocalDate.now())) {
+            TokenInfoDto tokenInfo = authClient.getToken(pharmacyId);
+            token = tokenInfo.getToken();
+            pharmacy.setToken(token);
+            pharmacy.setExpiredDate(tokenInfo.getExpiredDate());
+        }
+
+        return pharmacyInfoClient.getPharmacyInfo(pharmacyId, token);
     }
 }
