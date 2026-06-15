@@ -1,5 +1,6 @@
 package org.pharmacy.controller;
 
+import org.pharmacy.dto.PharmacyInfoDto;
 import org.pharmacy.dto.PharmacyRs;
 import org.pharmacy.dto.CreatePharmacyRq;
 import org.springframework.http.HttpStatus;
@@ -20,7 +21,7 @@ import java.util.UUID;
 /**
  * Интерфейс REST-контроллера для управления аптекой.
  */
-@RequestMapping("/api/v1/pharmacies")
+@RequestMapping("/api/v1/pharmacy")
 public interface PharmacyController {
 
     @PostMapping
@@ -40,4 +41,7 @@ public interface PharmacyController {
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     void deleteById(@PathVariable UUID id);
+
+    @GetMapping("/info/{pharmacyId}")
+    PharmacyInfoDto getPharmacyInfo(@PathVariable UUID pharmacyId);
 }

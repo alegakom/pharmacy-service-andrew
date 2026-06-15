@@ -1,6 +1,7 @@
 package org.pharmacy.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.pharmacy.dto.PharmacyInfoDto;
 import org.pharmacy.dto.PharmacyRs;
 import org.pharmacy.dto.CreatePharmacyRq;
 import org.pharmacy.service.PharmacyService;
@@ -45,5 +46,10 @@ public class PharmacyControllerImpl implements PharmacyController {
     @Override
     public void deleteById(UUID id) {
         pharmacyService.deleteById(id);
+    }
+
+    @Override
+    public PharmacyInfoDto getPharmacyInfo(UUID pharmacyId) {
+        return pharmacyService.getPharmacyInfo(pharmacyId);
     }
 }
