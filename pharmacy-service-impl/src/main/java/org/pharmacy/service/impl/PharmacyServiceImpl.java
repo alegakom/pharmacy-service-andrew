@@ -1,6 +1,7 @@
-package org.pharmacy.service;
+package org.pharmacy.service.impl;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.pharmacy.client.AuthClient;
 import org.pharmacy.client.PharmacyInfoClient;
 import org.pharmacy.constant.ExceptionMessageConstants;
@@ -16,6 +17,7 @@ import org.pharmacy.mapper.PharmacyMapper;
 import org.pharmacy.repository.PharmacyChainRepository;
 import org.pharmacy.repository.PharmacyRepository;
 import org.pharmacy.dto.CreatePharmacyRq;
+import org.pharmacy.service.PharmacyService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,6 +30,7 @@ import java.util.UUID;
  */
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class PharmacyServiceImpl implements PharmacyService {
 
     private final PharmacyRepository pharmacyRepository;
@@ -39,6 +42,7 @@ public class PharmacyServiceImpl implements PharmacyService {
     @Override
     @Transactional
     public PharmacyRs create(CreatePharmacyRq pharmacyRq) {
+        log.info("Creating pharmacy with inn: {}", pharmacyRq.getInn());
         if (pharmacyRepository.existsByInn(pharmacyRq.getInn())) {
             throw new DuplicateDataException(pharmacyRq.getInn());
         }
@@ -57,12 +61,14 @@ public class PharmacyServiceImpl implements PharmacyService {
         pharmacy.setPharmacyChain(pharmacyChain);
 
         Pharmacy saved = pharmacyRepository.save(pharmacy);
+        log.debug("Pharmacy created: {}", saved.getId());
         return pharmacyMapper.convertToDto(saved);
     }
 
     @Override
     @Transactional(readOnly = true)
     public PharmacyRs findById(UUID id) {
+        log.info("Finding pharmacy by id: {}", id);
         return pharmacyRepository.findById(id)
                 .map(pharmacyMapper::convertToDto)
                 .orElseThrow(() -> new NotFoundCrmException(
@@ -72,6 +78,7 @@ public class PharmacyServiceImpl implements PharmacyService {
     @Override
     @Transactional(readOnly = true)
     public List<PharmacyRs> findAllByPharmacyChainId(UUID pharmacyChainId) {
+        log.info("Finding all pharmacies by chain id: {}", pharmacyChainId);
         return pharmacyRepository.findAllByPharmacyChainId(pharmacyChainId).stream()
                 .map(pharmacyMapper::convertToDto)
                 .toList();
@@ -80,6 +87,7 @@ public class PharmacyServiceImpl implements PharmacyService {
     @Override
     @Transactional(readOnly = true)
     public List<PharmacyRs> findAll() {
+        log.info("Finding all pharmacies");
         return pharmacyRepository.findAll().stream()
                 .map(pharmacyMapper::convertToDto)
                 .toList();
@@ -88,6 +96,7 @@ public class PharmacyServiceImpl implements PharmacyService {
     @Override
     @Transactional
     public PharmacyRs update(UUID id, CreatePharmacyRq pharmacyRq) {
+        log.info("Updating pharmacy with id: {}", id);
         Pharmacy pharmacy = pharmacyRepository.findById(id)
                 .orElseThrow(() -> new NotFoundCrmException(
                         String.format(ExceptionMessageConstants.PHARMACY_NOT_FOUND, id)));
@@ -107,22 +116,26 @@ public class PharmacyServiceImpl implements PharmacyService {
 
         pharmacyMapper.updateEntityFromDto(pharmacyRq, pharmacy);
         pharmacyRepository.save(pharmacy);
+        log.debug("Pharmacy updated: {}", pharmacy.getId());
         return pharmacyMapper.convertToDto(pharmacy);
     }
 
     @Override
     @Transactional
     public void deleteById(UUID id) {
+        log.info("Deleting pharmacy with id: {}", id);
         if (!pharmacyRepository.existsById(id)) {
             throw new NotFoundCrmException(
                     String.format(ExceptionMessageConstants.PHARMACY_NOT_FOUND, id));
         }
         pharmacyRepository.deleteById(id);
+        log.debug("Pharmacy deleted: {}", id);
     }
 
     @Override
     @Transactional
     public PharmacyInfoDto getPharmacyInfo(UUID pharmacyId) {
+        log.info("Getting pharmacy info for id: {}", pharmacyId);
         Pharmacy pharmacy = pharmacyRepository.findById(pharmacyId)
                 .orElseThrow(() -> new NotFoundCrmException(
                         String.format(ExceptionMessageConstants.PHARMACY_NOT_FOUND, pharmacyId)));
@@ -130,10 +143,12 @@ public class PharmacyServiceImpl implements PharmacyService {
         String token = pharmacy.getToken();
         LocalDate expiredDate = pharmacy.getExpiredDate();
         if (token == null || expiredDate == null || expiredDate.isBefore(LocalDate.now())) {
+            log.warn("Token is missing or expired for pharmacy id: {}, requesting new token", pharmacyId);
             TokenInfoDto tokenInfo = authClient.getToken(pharmacyId);
             token = tokenInfo.getToken();
             pharmacy.setToken(token);
             pharmacy.setExpiredDate(tokenInfo.getExpiredDate());
+            log.debug("New token received for pharmacy id: {}, expires: {}", pharmacyId, tokenInfo.getExpiredDate());
         }
 
         return pharmacyInfoClient.getPharmacyInfo(pharmacyId, token);
