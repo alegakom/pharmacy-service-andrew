@@ -4,6 +4,8 @@ server:
     context-path: /pharmacy-service
 
 spring:
+  profiles:
+    active: dev
   application:
     name: pharmacy-service-impl
   datasource:
@@ -44,6 +46,8 @@ logging:
     console: "%d{yyyy-MM-dd HH:mm:ss} - %level - %msg%n"
     file: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
 
-auth-service:
+pharmacy-service:
   pharmacy-info:
-    url: http://localhost:8282//auth-service/api/v1/info/
+    url: http://localhost:8282/auth-service/api/v1/info/
+  user-info:
+    url: http://localhost:8383/external/api/user/info/
