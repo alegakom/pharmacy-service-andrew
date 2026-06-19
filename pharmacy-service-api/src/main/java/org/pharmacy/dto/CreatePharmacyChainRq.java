@@ -4,14 +4,18 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Value;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * Request-DTO для аптечной сети.
  */
-@Value
+@Data
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class CreatePharmacyChainRq {
 
     public interface onCreate {}
@@ -19,23 +23,23 @@ public class CreatePharmacyChainRq {
 
     @NotBlank(groups = CreatePharmacyChainRq.onCreate.class)
     @Size(max = 255)
-    String address;
+    private String address;
 
     @NotNull(groups = CreatePharmacyChainRq.onCreate.class)
-    Boolean locale;
+    private Boolean locale;
 
     @Size(max = 32)
-    String shortName;
+    private String shortName;
 
     @NotNull(groups = CreatePharmacyChainRq.onCreate.class)
     @Pattern(regexp = "\\d{10}|\\d{12}")
-    String inn;
+    private String inn;
 
     @NotBlank(groups = CreatePharmacyChainRq.onCreate.class)
     @Size(max = 64)
-    String juridicalName;
+    private String juridicalName;
 
     @NotBlank(groups = CreatePharmacyChainRq.onCreate.class)
     @Size(max = 8)
-    String juridicalForm;
+    private String juridicalForm;
 }

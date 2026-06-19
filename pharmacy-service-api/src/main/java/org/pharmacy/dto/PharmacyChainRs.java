@@ -1,22 +1,25 @@
 package org.pharmacy.dto;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Value;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.UUID;
 
 /**
  * DTO для аптечной сети.
  */
-@Value
+@Data
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class PharmacyChainRs {
-
-    UUID id;
-    String address;
-    Boolean locale;
-    String shortName;
-    String inn;
-    String juridicalName;
-    String juridicalForm;
+    private UUID id;
+    private String address;
+    private Boolean locale;
+    private String shortName;
+    private String inn;
+    private String juridicalName;
+    private String juridicalForm;
 }

@@ -1,15 +1,19 @@
 package org.pharmacy.dto;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Value;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 import java.util.UUID;
 
-@Value
+@Data
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class UserInfoDto {
-    UUID id;
-    String userName;
-    LocalDate birthDate;
+    private UUID id;
+    private String userName;
+    private LocalDate birthDate;
 }
