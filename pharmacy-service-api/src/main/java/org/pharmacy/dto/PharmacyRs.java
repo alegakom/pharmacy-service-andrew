@@ -1,22 +1,25 @@
 package org.pharmacy.dto;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Value;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.UUID;
 
 /**
  * Response-DTO для аптеки.
  */
-@Value
+@Data
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class PharmacyRs {
-
-    UUID id;
-    String address;
-    String name;
-    String inn;
-    String category;
-    String juridicalForm;
-    UUID pharmacyChainId;
+    private UUID id;
+    private String address;
+    private String name;
+    private String inn;
+    private String category;
+    private String juridicalForm;
+    private UUID pharmacyChainId;
 }

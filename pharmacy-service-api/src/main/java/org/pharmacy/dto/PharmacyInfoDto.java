@@ -1,12 +1,16 @@
 package org.pharmacy.dto;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Value;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-@Value
+@Data
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class PharmacyInfoDto {
-    String director;
-    String address;
-    String inn;
+    private String director;
+    private String address;
+    private String inn;
 }
