@@ -23,13 +23,13 @@ public class UserInfoClient {
 
     public UserInfoDto getUserInfo(String token) {
         log.info("Requesting user info");
-        String url = userInfoUrl + token;
-        HttpEntity<Void> httpEntity = new HttpEntity<>(getDefaultHeader());
-        return restTemplate.exchange(url, HttpMethod.GET, httpEntity, UserInfoDto.class).getBody();
+        HttpEntity<Void> httpEntity = new HttpEntity<>(getDefaultHeader(token));
+        return restTemplate.exchange(userInfoUrl, HttpMethod.GET, httpEntity, UserInfoDto.class).getBody();
     }
 
-    private HttpHeaders getDefaultHeader() {
+    private HttpHeaders getDefaultHeader(String token) {
         HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.set("User-Token", token);
         httpHeaders.setContentType(MediaType.APPLICATION_JSON);
         return httpHeaders;
     }
