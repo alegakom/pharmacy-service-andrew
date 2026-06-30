@@ -22,7 +22,7 @@ import java.util.Map;
 @Slf4j
 public class StubInterceptor implements ClientHttpRequestInterceptor {
 
-    private static final Map<String, String> STUB_RESPONSE_MAP = Map.of("/external/api/user/info/", "stub/user-info.json");
+    private static final Map<String, String> STUB_RESPONSE_MAP = Map.of("/external/api/user/info/", "__files/user-info.json");
 
     @Override
     public ClientHttpResponse intercept(HttpRequest request, byte[] body, ClientHttpRequestExecution execution) throws IOException {
