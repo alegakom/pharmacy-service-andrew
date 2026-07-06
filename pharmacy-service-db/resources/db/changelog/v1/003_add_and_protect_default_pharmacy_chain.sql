@@ -21,7 +21,7 @@ BEGIN
     IF OLD.id = '00000000-0000-0000-0000-000000000000' THEN
         RAISE EXCEPTION 'Служебная запись "Без аптечной сети" не может быть изменена или удалена';
     END IF;
-    RETURN NEW;
+    RETURN OlD;
 END;
 $$ LANGUAGE plpgsql;
 
