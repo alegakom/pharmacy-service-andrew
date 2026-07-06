@@ -1,4 +1,4 @@
-package org.pharmacy.service;
+package org.pharmacy.unit.service;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -13,11 +13,10 @@ import org.pharmacy.service.impl.UserServiceImpl;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-import static org.pharmacy.TestData.USER_INN;
-import static org.pharmacy.TestData.getTokenInfoRs;
-import static org.pharmacy.TestData.getUserInfoRs;
+import static org.mockito.Mockito.*;
+import static org.pharmacy.utils.TestData.USER_INN;
+import static org.pharmacy.utils.TestData.getTokenInfoRs;
+import static org.pharmacy.utils.TestData.getUserInfoRs;
 
 @ExtendWith(MockitoExtension.class)
 class UserServiceTest {
@@ -44,7 +43,7 @@ class UserServiceTest {
         assertNotNull(actualUserInfo);
         assertEquals(expectedUserInfo, actualUserInfo);
 
-        verify(authClient).getUserToken(USER_INN);
-        verify(userInfoClient).getUserInfo(tokenInfo.getToken());
+        verify(authClient, times(1)).getUserToken(USER_INN);
+        verify(userInfoClient, times(2)).getUserInfo(tokenInfo.getToken());
     }
 }

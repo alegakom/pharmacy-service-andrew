@@ -1,6 +1,5 @@
 package org.pharmacy.entity;
 
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -9,6 +8,8 @@ import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.Pattern;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -25,6 +26,8 @@ import java.util.UUID;
 @Getter
 @Setter
 @NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class PharmacyChain {
 
     @Id
@@ -51,6 +54,6 @@ public class PharmacyChain {
     @Column(name = "juridical_form", nullable = false, length = 8)
     private String juridicalForm;
 
-    @OneToMany(mappedBy = "pharmacyChain", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "pharmacyChain")
     private List<Pharmacy> pharmacies = new ArrayList<>();
 }
