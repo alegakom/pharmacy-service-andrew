@@ -1,0 +1,54 @@
+server:
+  port: 8181
+  servlet:
+    context-path: /pharmacy-service
+
+spring:
+#  profiles:
+#    active: dev
+  application:
+    name: pharmacy-service-impl
+  datasource:
+    url: jdbc:postgresql://localhost:5433/pharmacy_db
+    username: postgres
+    password: postgres
+  liquibase:
+    change-log: classpath:/db/changelog/db.changelog-master.yaml
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: true
+  cloud:
+    openfeign:
+      client:
+        config:
+          default:
+            connect-timeout: 60000
+            read-timeout: 10000
+          auth-service:
+            url: http://localhost:9092
+            connect-timeout: 60000
+            read-timeout: 10000
+
+auth:
+  service:
+    url: http://localhost:9092/auth-service
+
+logging:
+  level:
+    org:
+      hibernate:
+        sql: DEBUG
+    org.pharmacy: DEBUG
+    org.pharmacy.exception.handler: ERROR
+  file:
+    name: logs/pharmacy-app.log
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} - %level - %msg%n"
+    file: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
+
+pharmacy-service:
+  pharmacy-info:
+    url: http://localhost:9092/auth-service/api/v1/info/
+  user-info:
+    url: http://localhost:9092/external/api/user/info/

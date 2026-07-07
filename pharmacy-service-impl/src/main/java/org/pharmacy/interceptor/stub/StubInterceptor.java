@@ -46,7 +46,7 @@ public class StubInterceptor implements ClientHttpRequestInterceptor {
             return mockClientHttpResponse;
         }
 
-        log.error("No stub found for request path: {}. Add stub mapping to STUB_RESPONSE_MAP", requestPath);
-        throw new IllegalStateException("No stub found for path: " + requestPath);
+        log.debug("No stub found for request path: {}. Proceeding with real request.", requestPath);
+        return execution.execute(request, body);
     }
 }
