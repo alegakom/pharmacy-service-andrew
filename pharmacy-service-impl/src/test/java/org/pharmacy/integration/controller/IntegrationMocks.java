@@ -6,8 +6,10 @@ import static com.github.tomakehurst.wiremock.client.WireMock.*;
 
 public class IntegrationMocks {
 
+    private static final String AUTH_SERVICE_URL = "/auth-service/api/v1";
+
     public static void mockGetUserToken(String inn) {
-        stubFor(get("/auth-service/api/v1/credentials/user/" + inn + "/get-token")
+        stubFor(get(AUTH_SERVICE_URL + "/credentials/user/" + inn + "/get-token")
                 .willReturn(aResponse()
                         .withStatus(200)
                         .withHeader("Content-Type", "application/json")
@@ -15,7 +17,7 @@ public class IntegrationMocks {
     }
 
     public static void mockGetUserToken() {
-        stubFor(get(urlPathMatching("/auth-service/api/v1/credentials/user/[0-9-]*/get-token"))
+        stubFor(get(urlPathMatching(AUTH_SERVICE_URL + "/credentials/user/[0-9-]*/get-token"))
                 .willReturn(aResponse()
                         .withStatus(200)
                         .withHeader("Content-Type", "application/json")
@@ -23,11 +25,19 @@ public class IntegrationMocks {
     }
 
     public static void mockGetPharmacyToken(UUID pharmacyId) {
-        stubFor(get("/auth-service/api/v1/credentials/" + pharmacyId + "/get-token")
+        stubFor(get(AUTH_SERVICE_URL + "/credentials/" + pharmacyId + "/get-token")
                 .willReturn(aResponse()
                         .withStatus(200)
                         .withHeader("Content-Type", "application/json")
                         .withBodyFile("token-info.json")));
+    }
+
+    public static void mockGetPharmacyInfo(UUID pharmacyId) {
+        stubFor(post(AUTH_SERVICE_URL + "/info/" + pharmacyId)
+                .willReturn(aResponse()
+                        .withStatus(200)
+                        .withHeader("Content-Type", "application/json")
+                        .withBodyFile("pharmacy-info.json")));
     }
 
     public static void mockGetUserInfo() {
@@ -36,13 +46,5 @@ public class IntegrationMocks {
                         .withStatus(200)
                         .withHeader("Content-Type", "application/json")
                         .withBodyFile("user-info.json")));
-    }
-
-    public static void mockGetPharmacyInfo(UUID pharmacyId) {
-        stubFor(post("/auth-service/api/v1/info/" + pharmacyId)
-                .willReturn(aResponse()
-                        .withStatus(200)
-                        .withHeader("Content-Type", "application/json")
-                        .withBodyFile("pharmacy-info.json")));
     }
 }
