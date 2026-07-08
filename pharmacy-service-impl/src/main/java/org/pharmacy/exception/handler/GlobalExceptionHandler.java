@@ -30,7 +30,7 @@ public class GlobalExceptionHandler {
         return exception.getMessage();
     }
 
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ResponseStatus(HttpStatus.FORBIDDEN)
     @ExceptionHandler(DefaultPharmacyChainModificationException.class)
     public String handleDefaultPharmacyChainModificationException(DefaultPharmacyChainModificationException exception) {
         log.error("Default pharmacy chain modification exception: {}", exception.getMessage());
