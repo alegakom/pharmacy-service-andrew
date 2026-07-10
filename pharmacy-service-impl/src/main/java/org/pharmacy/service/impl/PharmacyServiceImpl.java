@@ -2,7 +2,6 @@ package org.pharmacy.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.pharmacy.client.AuthClient;
 import org.pharmacy.client.PharmacyInfoClient;
 import org.pharmacy.constant.ExceptionMessageConstants;
 import org.pharmacy.constant.PharmacyChainConstants;
@@ -17,6 +16,7 @@ import org.pharmacy.mapper.PharmacyMapper;
 import org.pharmacy.repository.PharmacyChainRepository;
 import org.pharmacy.repository.PharmacyRepository;
 import org.pharmacy.dto.CreatePharmacyRq;
+import org.pharmacy.service.AuthService;
 import org.pharmacy.service.PharmacyService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -36,7 +36,7 @@ public class PharmacyServiceImpl implements PharmacyService {
     private final PharmacyRepository pharmacyRepository;
     private final PharmacyChainRepository pharmacyChainRepository;
     private final PharmacyMapper pharmacyMapper;
-    private final AuthClient authClient;
+    private final AuthService authService;
     private final PharmacyInfoClient pharmacyInfoClient;
 
     @Override
@@ -144,7 +144,7 @@ public class PharmacyServiceImpl implements PharmacyService {
         LocalDate expiredDate = pharmacy.getExpiredDate();
         if (token == null || expiredDate == null || expiredDate.isBefore(LocalDate.now())) {
             log.warn("Token is missing or expired for pharmacy id: {}, requesting new token", pharmacyId);
-            TokenInfoDto tokenInfo = authClient.getToken(pharmacyId);
+            TokenInfoDto tokenInfo = authService.getToken(pharmacyId);
             token = tokenInfo.getToken();
             pharmacy.setToken(token);
             pharmacy.setExpiredDate(tokenInfo.getExpiredDate());
