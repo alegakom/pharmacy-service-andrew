@@ -117,4 +117,13 @@ public interface PharmacyController {
     })
     @GetMapping("/info/{pharmacyId}")
     PharmacyInfoDto getPharmacyInfo(@Parameter(description = "ID аптеки") @PathVariable UUID pharmacyId);
+
+    @Operation(summary = "Отозвать токен аптеки")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "204", description = "Токен отозван"),
+            @ApiResponse(responseCode = "404", description = "Токен не найден")
+    })
+    @DeleteMapping("/{pharmacyId}/revoke-token")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    void revokeToken(@Parameter(description = "ID аптеки") @PathVariable UUID pharmacyId);
 }

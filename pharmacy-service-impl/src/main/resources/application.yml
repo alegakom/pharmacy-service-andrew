@@ -29,6 +29,11 @@ spring:
             url: http://localhost:8282
             connect-timeout: 60000
             read-timeout: 10000
+  cache:
+    type: caffeine
+    caffeine:
+      spec: maximumSize=100, expireAfterAccess=10s
+
 
 auth:
   service:
@@ -38,8 +43,9 @@ logging:
   level:
     org:
       hibernate:
-        sql: debug
-    org.pharmacy.exception.handler: error
+        sql: DEBUG
+    org.pharmacy.exception.handler: ERROR
+    org.springframework.cache: TRACE
   file:
     name: logs/pharmacy-app.log
   pattern:
