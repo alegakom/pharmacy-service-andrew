@@ -1,7 +1,6 @@
 package org.pharmacy.service;
 
 import org.pharmacy.dto.TokenInfoDto;
-import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.UUID;
 

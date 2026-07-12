@@ -1,12 +1,13 @@
 package org.pharmacy.service.impl;
 
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.pharmacy.client.PharmacyInfoClient;
 import org.pharmacy.constant.ExceptionMessageConstants;
 import org.pharmacy.constant.PharmacyChainConstants;
-import org.pharmacy.dto.PharmacyInfoDto;
 import org.pharmacy.dto.PharmacyRs;
+import org.pharmacy.dto.PharmacyInfoDto;
 import org.pharmacy.dto.TokenInfoDto;
 import org.pharmacy.entity.Pharmacy;
 import org.pharmacy.entity.PharmacyChain;
@@ -18,10 +19,12 @@ import org.pharmacy.repository.PharmacyRepository;
 import org.pharmacy.dto.CreatePharmacyRq;
 import org.pharmacy.service.AuthService;
 import org.pharmacy.service.PharmacyService;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -153,4 +156,50 @@ public class PharmacyServiceImpl implements PharmacyService {
 
         return pharmacyInfoClient.getPharmacyInfo(pharmacyId, token);
     }
+
+    @Transactional
+    @Override
+    public void checkingToken(List<UUID> pharmacyIds) {
+        long startTime = System.nanoTime();
+
+        List<Pharmacy> pharmacies = (pharmacyIds == null || pharmacyIds.isEmpty())
+                ? pharmacyRepository.findAll()
+                : pharmacyRepository.findAllById(pharmacyIds);
+
+        pharmacies
+                .parallelStream()
+                .forEach(pharmacy -> {
+                    if (pharmacy.getExpiredDate().isBefore(LocalDate.now().plusDays(1))) {
+                        TokenInfoDto newToken = authService.getToken(pharmacy.getId());
+                        pharmacy.setToken(newToken.getToken());
+                        pharmacy.setExpiredDate(newToken.getExpiredDate());
+                    }
+                });
+
+        log.info("Tokens updated");
+        long endTime = System.nanoTime();
+        long resultTime = endTime - startTime;
+        log.info("Result time = {}", resultTime / 1000000);
+    }
+
+//    @Async
+//    @SneakyThrows
+//    @Transactional
+//    @Override
+//    public void checkingToken(List<UUID> pharmacyIds) {
+//        List<Pharmacy> pharmacies = (pharmacyIds == null || pharmacyIds.isEmpty())
+//                ? pharmacyRepository.findAll()
+//                : pharmacyRepository.findAllById(pharmacyIds);
+//
+//        pharmacies.forEach(pharmacy -> {
+//                    if (pharmacy.getExpiredDate().isBefore(LocalDate.now().plusDays(1))) {
+//                        TokenInfoDto newToken = authService.getToken(pharmacy.getId());
+//                        pharmacy.setToken(newToken.getToken());
+//                        pharmacy.setExpiredDate(newToken.getExpiredDate());
+//                    }
+//                });
+//
+//        Thread.sleep(10000);
+//        log.info("Tokens updated");
+//    }
 }

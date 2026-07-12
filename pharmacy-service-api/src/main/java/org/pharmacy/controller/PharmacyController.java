@@ -7,8 +7,8 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import org.pharmacy.dto.PharmacyInfoDto;
 import org.pharmacy.dto.PharmacyRs;
+import org.pharmacy.dto.PharmacyInfoDto;
 import org.pharmacy.dto.CreatePharmacyRq;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
@@ -126,4 +126,12 @@ public interface PharmacyController {
     @DeleteMapping("/{pharmacyId}/revoke-token")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     void revokeToken(@Parameter(description = "ID аптеки") @PathVariable UUID pharmacyId);
+
+    @Operation(summary = "Проверить актуальность и обновить токен аптеки")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Токен актуален"),
+    })
+    @PostMapping("/checking-token")
+    @ResponseStatus(HttpStatus.OK)
+    void checkingToken(@Schema(description = "Список ID аптек для проверки. Если null или пустой, проверяются все аптеки.") @RequestBody List<UUID> pharmacyIds);
 }

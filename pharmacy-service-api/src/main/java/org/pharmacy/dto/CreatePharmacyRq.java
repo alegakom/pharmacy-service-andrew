@@ -12,9 +12,7 @@ import lombok.NoArgsConstructor;
 
 import java.util.UUID;
 
-/**
- * Request-DTO для аптеки.
- */
+@Schema(description = "Запрос на создание или обновление аптеки")
 @Data
 @Builder
 @NoArgsConstructor
