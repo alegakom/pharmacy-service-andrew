@@ -8,9 +8,7 @@ import lombok.NoArgsConstructor;
 
 import java.util.UUID;
 
-/**
- * DTO для аптечной сети.
- */
+@Schema(description = "Ответ с данными аптечной сети")
 @Data
 @Builder
 @NoArgsConstructor

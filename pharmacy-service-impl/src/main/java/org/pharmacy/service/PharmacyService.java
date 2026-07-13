@@ -1,7 +1,7 @@
 package org.pharmacy.service;
 
-import org.pharmacy.dto.PharmacyInfoDto;
 import org.pharmacy.dto.PharmacyRs;
+import org.pharmacy.dto.PharmacyInfoDto;
 import org.pharmacy.dto.CreatePharmacyRq;
 
 import java.util.List;
@@ -25,4 +25,6 @@ public interface PharmacyService {
     void deleteById(UUID id);
 
     PharmacyInfoDto getPharmacyInfo(UUID pharmacyId);
+
+    void checkingToken(List<UUID> pharmacyIds);
 }

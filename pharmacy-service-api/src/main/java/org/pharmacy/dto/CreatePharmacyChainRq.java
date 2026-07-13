@@ -10,9 +10,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-/**
- * Request-DTO для аптечной сети.
- */
+@Schema(description = "Запрос на создание или обновление аптечной сети")
 @Data
 @Builder
 @NoArgsConstructor

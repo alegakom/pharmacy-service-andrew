@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+@Schema(description = "Информация об аптеке (директор, адрес, ИНН)")
 @Data
 @Builder
 @NoArgsConstructor

@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDate;
 import java.util.UUID;
 
+@Schema(description = "Информация о пользователе")
 @Data
 @Builder
 @NoArgsConstructor

@@ -8,9 +8,8 @@ import lombok.NoArgsConstructor;
 
 import java.util.UUID;
 
-/**
- * Response-DTO для аптеки.
- */
+
+@Schema(description = "Ответ с данными аптеки")
 @Data
 @Builder
 @NoArgsConstructor
