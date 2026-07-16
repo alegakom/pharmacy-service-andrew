@@ -25,6 +25,8 @@ class UserControllerIT extends AbstractControllerIT {
     @ValueSource(strings = {"123456789098", "098765432134", USER_INN})
     @DisplayName("Тест метода для получения данных пользователя")
     void getUserInfoTest(String inn) {
+        System.out.println("Available processors: " + Runtime.getRuntime().availableProcessors());
+
         mockGetUserToken(inn);
         mockGetUserInfo();
         var response = given()
