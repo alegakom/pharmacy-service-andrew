@@ -7,7 +7,9 @@ import org.junit.jupiter.api.Test;
 import org.pharmacy.dto.CreatePharmacyChainRq;
 import org.pharmacy.dto.PharmacyChainRs;
 import org.pharmacy.entity.PharmacyChain;
+import org.pharmacy.mapper.PharmacyChainMapper;
 import org.springframework.http.HttpStatus;
+import org.springframework.test.context.bean.override.mockito.MockitoSpyBean;
 
 import java.util.List;
 import java.util.Optional;
@@ -20,18 +22,12 @@ import static org.pharmacy.utils.TestData.generateRandomInn;
 @DisplayName("Тест сервиса для работы с аптечной сетью")
 public class PharmacyChainControllerIT extends AbstractControllerIT {
 
-    // Вспомогательный метод для создания сети через API
-    private PharmacyChainRs createPharmacyChainViaApi(CreatePharmacyChainRq request) {
-        return given()
-                .header("Content-Type", "CustomHeader")
-                .contentType(ContentType.JSON)
-                .body(request)
-                .when()
-                .post("/api/v1/pharmacy-chain")
-                .then()
-                .statusCode(HttpStatus.CREATED.value())
-                .extract()
-                .as(PharmacyChainRs.class);
+    @MockitoSpyBean
+    private PharmacyChainMapper pharmacyChainMapper;
+
+    // Вспомогательный метод для создания аптечной сети
+    private PharmacyChainRs createPharmacyChain(CreatePharmacyChainRq request) {
+        return pharmacyChainMapper.toDto(pharmacyChainRepository.save(pharmacyChainMapper.toEntity(request)));
     }
 
     // Генерация случайного запроса для создания сети
@@ -52,7 +48,7 @@ public class PharmacyChainControllerIT extends AbstractControllerIT {
     void createTest() {
         CreatePharmacyChainRq request = randomCreatePharmacyChainRq();
 
-        PharmacyChainRs response = createPharmacyChainViaApi(request);
+        PharmacyChainRs response = createPharmacyChain(request);
 
         assertNotNull(response.getId());
         assertEquals(request.getAddress(), response.getAddress());
@@ -79,7 +75,7 @@ public class PharmacyChainControllerIT extends AbstractControllerIT {
     @DisplayName("Поиск сети по id")
     void findByIdTest() {
         CreatePharmacyChainRq request = randomCreatePharmacyChainRq();
-        PharmacyChainRs created = createPharmacyChainViaApi(request);
+        PharmacyChainRs created = createPharmacyChain(request);
 
         PharmacyChainRs found = given()
                 .header("Content-Type", "CustomHeader")
@@ -105,7 +101,7 @@ public class PharmacyChainControllerIT extends AbstractControllerIT {
     @DisplayName("Поиск всех сетей")
     void findAllTest() {
         for (int i = 0; i < 3; i++) {
-            createPharmacyChainViaApi(randomCreatePharmacyChainRq());
+            createPharmacyChain(randomCreatePharmacyChainRq());
         }
 
         List<PharmacyChainRs> all = given()
@@ -126,7 +122,7 @@ public class PharmacyChainControllerIT extends AbstractControllerIT {
     @DisplayName("Обновление сети")
     void updateTest() {
         CreatePharmacyChainRq createRequest = randomCreatePharmacyChainRq();
-        PharmacyChainRs created = createPharmacyChainViaApi(createRequest);
+        PharmacyChainRs created = createPharmacyChain(createRequest);
 
         // Новые данные для обновления
         CreatePharmacyChainRq updateRequest = CreatePharmacyChainRq.builder()
@@ -174,7 +170,7 @@ public class PharmacyChainControllerIT extends AbstractControllerIT {
     @DisplayName("Удаление сети")
     void deleteTest() {
         CreatePharmacyChainRq request = randomCreatePharmacyChainRq();
-        PharmacyChainRs created = createPharmacyChainViaApi(request);
+        PharmacyChainRs created = createPharmacyChain(request);
 
         given()
                 .header("Content-Type", "CustomHeader")
@@ -238,7 +234,7 @@ public class PharmacyChainControllerIT extends AbstractControllerIT {
     @DisplayName("Создание сети с дубликатом INN вызывает ошибку")
     void createDuplicateInnTest() {
         CreatePharmacyChainRq request = randomCreatePharmacyChainRq();
-        createPharmacyChainViaApi(request); // первая сеть
+        createPharmacyChain(request); // первая сеть
 
         // Пытаемся создать вторую с тем же INN
         CreatePharmacyChainRq duplicateRequest = CreatePharmacyChainRq.builder()

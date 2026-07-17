@@ -1,0 +1,114 @@
+services:
+  pharmacy-db:
+    image: postgres:16
+    container_name: pharmacy-db
+    environment:
+      POSTGRES_DB: pharmacy_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5433:5432"
+    volumes:
+      - pharmacy-db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  auth-db:
+    image: postgres:16
+    container_name: auth-db
+    environment:
+      POSTGRES_DB: auth_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5434:5432"
+    volumes:
+      - auth-db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  auth-service-1:
+    build:
+      context: ../auth-service
+      dockerfile: Dockerfile
+    container_name: auth-service-1
+    ports:
+      - "8282:8282"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+    depends_on:
+      auth-db:
+        condition: service_healthy
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8282/auth-service/actuator/health" ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+#  auth-service-2:
+#    build:
+#      context: ../auth-service
+#      dockerfile: Dockerfile
+#    container_name: auth-service-2
+#    ports:
+#      - "8283:8282"
+#    environment:
+#      - SPRING_PROFILES_ACTIVE=docker
+#    depends_on:
+#      auth-db:
+#        condition: service_healthy
+#    healthcheck:
+#      test: [ "CMD", "curl", "-f", "http://localhost:8283/auth-service/actuator/health" ]
+#      interval: 30s
+#      timeout: 10s
+#      retries: 3
+
+  pharmacy-service-1:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: pharmacy-service-1
+    ports:
+      - "8181:8181"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+    depends_on:
+      pharmacy-db:
+        condition: service_healthy
+      auth-service-1:
+        condition: service_healthy
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8181/pharmacy-service/actuator/health" ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  pharmacy-service-2:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: pharmacy-service-2
+    ports:
+      - "8182:8181"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+    depends_on:
+      pharmacy-db:
+        condition: service_healthy
+      auth-service-1:
+        condition: service_healthy
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8182/pharmacy-service/actuator/health" ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+volumes:
+  pharmacy-db-data:
+  auth-db-data:

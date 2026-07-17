@@ -44,6 +44,6 @@ class UserServiceTest {
         assertEquals(expectedUserInfo, actualUserInfo);
 
         verify(authClient, times(1)).getUserToken(USER_INN);
-        verify(userInfoClient, times(2)).getUserInfo(tokenInfo.getToken());
+        verify(userInfoClient, times(1)).getUserInfo(tokenInfo.getToken());
     }
 }
