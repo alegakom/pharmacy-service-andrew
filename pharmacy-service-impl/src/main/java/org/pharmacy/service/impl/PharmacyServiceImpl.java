@@ -12,6 +12,8 @@ import org.pharmacy.dto.PharmacyInfoDto;
 import org.pharmacy.dto.TokenInfoDto;
 import org.pharmacy.entity.Pharmacy;
 import org.pharmacy.entity.PharmacyChain;
+import org.pharmacy.enums.PharmacyState;
+import org.pharmacy.event.PharmacyStateEvent;
 import org.pharmacy.exception.DuplicateDataException;
 import org.pharmacy.exception.NotFoundCrmException;
 import org.pharmacy.mapper.PharmacyMapper;
@@ -20,6 +22,7 @@ import org.pharmacy.repository.PharmacyRepository;
 import org.pharmacy.dto.CreatePharmacyRq;
 import org.pharmacy.service.AuthService;
 import org.pharmacy.service.PharmacyService;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -47,6 +50,7 @@ public class PharmacyServiceImpl implements PharmacyService {
     private final AuthService authService;
     private final PharmacyInfoClient pharmacyInfoClient;
     private final ExecutorService executorService;
+    private final ApplicationEventPublisher eventPublisher;
 
     @Override
     @Transactional
@@ -71,6 +75,13 @@ public class PharmacyServiceImpl implements PharmacyService {
 
         Pharmacy saved = pharmacyRepository.save(pharmacy);
         log.debug("Pharmacy created: {}", saved.getId());
+
+        eventPublisher.publishEvent(PharmacyStateEvent.builder()
+                .name(saved.getName())
+                .pharmacyId(saved.getId())
+                .state(PharmacyState.NEW)
+                .build());
+
         return pharmacyMapper.convertToDto(saved);
     }
 
@@ -126,6 +137,13 @@ public class PharmacyServiceImpl implements PharmacyService {
         pharmacyMapper.updateEntityFromDto(pharmacyRq, pharmacy);
         pharmacyRepository.save(pharmacy);
         log.debug("Pharmacy updated: {}", pharmacy.getId());
+
+        eventPublisher.publishEvent(PharmacyStateEvent.builder()
+                .name(pharmacy.getName())
+                .pharmacyId(pharmacy.getId())
+                .state(PharmacyState.UPDATED)
+                .build());
+
         return pharmacyMapper.convertToDto(pharmacy);
     }
 
@@ -139,6 +157,10 @@ public class PharmacyServiceImpl implements PharmacyService {
         }
         pharmacyRepository.deleteById(id);
         log.debug("Pharmacy deleted: {}", id);
+        eventPublisher.publishEvent(PharmacyStateEvent.builder()
+                .pharmacyId(id)
+                .state(PharmacyState.CLOSED)
+                .build());
     }
 
     @Override

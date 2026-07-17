@@ -66,6 +66,7 @@ public class PharmacyChainServiceImpl implements PharmacyChainService {
 
     @Override
     public PharmacyChainRs update(UUID id, CreatePharmacyChainRq pharmacyChainRq) {
+        // TODO не обновляется
         log.info("Updating pharmacy chain with id: {}", id);
         if (PharmacyChainConstants.WITHOUT_CHAIN_DEFAULT_ID.equals(id)) {
             throw new DefaultPharmacyChainModificationException(

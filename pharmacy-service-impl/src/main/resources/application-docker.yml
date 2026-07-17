@@ -1,0 +1,24 @@
+server:
+  port: 8181
+  servlet:
+    context-path: /pharmacy-service
+
+spring:
+  datasource:
+    url: jdbc:postgresql://pharmacy-db:5432/pharmacy_db
+    username: postgres
+    password: postgres
+  liquibase:
+    change-log: classpath:/db/changelog/db.changelog-master.yaml
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: true
+
+auth:
+  service:
+    url: http://auth-service-1:8282/auth-service
+
+logging:
+  level:
+    org.hibernate.SQL: DEBUG
